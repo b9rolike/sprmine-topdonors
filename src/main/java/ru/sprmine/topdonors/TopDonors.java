@@ -34,7 +34,6 @@ public class TopDonors extends JavaPlugin {
         this.periodDays = getConfig().getInt("period-days", 30);
         int updateInterval = getConfig().getInt("update-interval-minutes", 30);
 
-        // Регистрируем PlaceholderAPI экспансию если PAPI установлен
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new TopDonorsExpansion(this).register();
             getLogger().info("PlaceholderAPI hook enabled!");
@@ -42,11 +41,9 @@ public class TopDonors extends JavaPlugin {
             getLogger().warning("PlaceholderAPI not found! Placeholders will not work.");
         }
 
-        // Первое обновление при запуске
         Bukkit.getScheduler().runTaskAsynchronously(this, this::updateTopDonors);
 
-        // Периодическое обновление
-        long ticks = updateInterval * 60L * 20L; // минуты в тики
+        long ticks = updateInterval * 60L * 20L;
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::updateTopDonors, ticks, ticks);
 
         getLogger().info("TopDonors enabled! Update interval: " + updateInterval + " minutes, period: " + periodDays + " days.");
@@ -54,7 +51,16 @@ public class TopDonors extends JavaPlugin {
 
     public void updateTopDonors() {
         List<DonorEntry> result = new ArrayList<>();
-        File dbFile = new File(getDataFolder().getParentFile().getParentFile(), dbPath);
+        File serverRoot = getDataFolder().getParentFile().getParentFile();
+        File dbFile = new File(serverRoot, dbPath);
+        if (!dbFile.exists()) {
+            File alt = new File(dbPath);
+            getLogger().info("Primary path not found (" + dbFile.getAbsolutePath() + "), trying: " + alt.getAbsolutePath());
+            if (alt.exists()) {
+                dbFile = alt;
+            }
+        }
+        getLogger().info("Using database at: " + dbFile.getAbsolutePath() + " (exists: " + dbFile.exists() + ")");
 
         String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
 
