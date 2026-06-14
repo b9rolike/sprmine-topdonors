@@ -1,0 +1,8 @@
+# Путь к базе данных EasyPayments относительно корня сервера
+database-path: "plugins/EasyPayments/database.db"
+
+# Период за который считать топ донатов (в днях)
+period-days: 30
+
+# Как часто обновлять топ (в минутах)
+update-interval-minutes: 30

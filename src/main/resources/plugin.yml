@@ -1,0 +1,7 @@
+name: TopDonors
+version: 1.0.0
+main: ru.sprmine.topdonors.TopDonors
+api-version: 1.21
+author: SPRmine
+description: Top-10 donors from EasyPayments database, exposed via PlaceholderAPI
+softdepend: [PlaceholderAPI]
